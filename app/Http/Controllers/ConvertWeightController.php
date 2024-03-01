@@ -8,22 +8,31 @@ class ConvertWeightController extends Controller
 {
     public function __invoke($value, $unit)
     {
-        $result = $this->convertWeight($value, $unit);
-        
-        return response()->json(['result' => $result]);
+        // Agafem el resultat de la conversió
+        if (!is_numeric($value)) {
+            return response()->json(['code' => 400, 'message'=> 'Value or Unit not numeric.']);
+        }
+
+        // Agafem el resultat de la conversió
+        $result = $this->convertLength($value, strtolower($unit));
+
+        // Mostrem el resultats
+        return response()->json(['code' => 200, 'message'=> 'Value calculated', "data" => ['value' => $value, 'unit' => $unit], 'result' => $result]); 
     }
 
-    private function convertWeight($value, $unit)
+    /**
+     * Funció per a fer la conversió
+     * @return double el resultat
+     */
+    private function convertLength($value, $unit)
     {
-        $conversionFactors = [
-            'kilograms_to_pounds' => 2.20462,
-            'pounds_to_kilograms' => 0.453592,
-        ];
-
-        if (isset($conversionFactors[$unit])) {
-            return $value * $conversionFactors[$unit];
-        } else {
-            return ['error' => 'Invalid unit'];
+        switch ($unit) {
+            case 'kilograms':
+                return $value * 2.20462; 
+            case 'pounds':
+                return $value / 2.20462; 
+            default:
+                return ['error' => 'Unreconigzed unit'];
         }
     }
 }

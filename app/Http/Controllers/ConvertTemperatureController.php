@@ -8,20 +8,31 @@ class ConvertTemperatureController extends Controller
 {
     public function __invoke($value, $unit)
     {
-        $result = $this->convertTemperature($value, $unit);
+        // Agafem el resultat de la conversió
+        if (!is_numeric($value)) {
+            return response()->json(['code' => 400, 'message'=> 'Value or Unit not numeric.']);
+        }
 
-        return response()->json(['result' => $result]);
+        // Agafem el resultat de la conversiós
+        $result = $this->convertLength($value, strtolower($unit));
+
+        // Mostrem el resultats
+        return response()->json(['code' => 200, 'message'=> 'Value calculated', "data" => ['value' => $value, 'unit' => $unit], 'result' => $result]); 
     }
 
-    private function convertTemperature($value, $unit)
+    /**
+     * Funció per a fer la conversió
+     * @return double el resultat
+     */
+    private function convertLength($value, $unit)
     {
         switch ($unit) {
-            case 'celsius_to_fahrenheit':
-                return($value * 9 / 5) + 32;
-            case 'fahrenheit_to_celsius':
-                return($value - 32) * 5 / 9;
+            case 'celsius':
+                return ($value * 9 / 5) + 32; 
+            case 'fahrenheit':
+                return ($value - 32) * 5 / 9;
             default:
-                return ['error' => 'Invalid unit'];
+                return ['error' => 'Unreconigzed unit'];
         }
     }
 }

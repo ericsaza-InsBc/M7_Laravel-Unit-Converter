@@ -8,22 +8,31 @@ class ConvertLengthController extends Controller
 {
     public function __invoke($value, $unit)
     {
-        $result = $this->convertLength($value, $unit);
-        
-        return response()->json(['result' => $result]);
+        // Si el valor a convertir no es númeric donará error
+        if (!is_numeric($value)) {
+            return response()->json(['code' => 400, 'message'=> 'Value or Unit not numeric.']);
+        }
+
+        // Agafem el resultat de la conversió
+        $result = $this->convertLength($value, strtolower($unit));
+
+        // Mostrem el resultats
+        return response()->json(['code' => 200, 'message'=> 'Value calculated', "data" => ['value' => $value, 'unit' => $unit], 'result' => $result]); 
     }
 
+    /**
+     * Funció per a fer la conversió
+     * @return double el resultat
+     */
     private function convertLength($value, $unit)
     {
-        $conversionFactors = [
-            'meters_to_feet' => 3.28084,
-            'feet_to_meters' => 0.3048,
-        ];
-
-        if (isset($conversionFactors[$unit])) {
-            return $value * $conversionFactors[$unit];
-        } else {
-            return ['error' => 'Invalid unit'];
+        switch ($unit) {
+            case 'meters':
+                return $value * 3.28084; 
+            case 'feet':
+                return $value / 3.28084; 
+            default:
+                return ['error' => 'Unreconigzed unit'];
         }
     }
 }

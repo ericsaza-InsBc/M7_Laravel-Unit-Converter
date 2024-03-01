@@ -8,22 +8,31 @@ class ConvertVolumeController extends Controller
 {
     public function __invoke($value, $unit)
     {
-        $result = $this->convertVolume($value, $unit);
+        // Agafem el resultat de la conversió
+        if (!is_numeric($value)) {
+            return response()->json(['code' => 400, 'message'=> 'Value or Unit not numeric.']);
+        }
 
-        return response()->json(['result' => $result]);
+        // Agafem el resultat de la conversió
+        $result = $this->convertLength($value, strtolower($unit));
+
+        // Mostrem el resultats
+        return response()->json(['code' => 200, 'message'=> 'Value calculated', "data" => ['value' => $value, 'unit' => $unit], 'result' => $result]); 
     }
 
-    private function convertVolume($value, $unit)
+    /**
+     * Funció per a fer la conversió
+     * @return double el resultat
+     */
+    private function convertLength($value, $unit)
     {
-        $conversionFactors = [
-            'liters_to_gallons' => 0.264172,
-            'gallons_to_liters' => 3.78541,
-        ];
-
-        if (isset($conversionFactors[$unit])) {
-            return $value * $conversionFactors[$unit];
-        } else {
-            return ['error' => 'Invalid unit'];
+        switch ($unit) {
+            case 'liters':
+                return $value * 0.264172;
+            case 'gallons':
+                return $value / 0.264172;
+            default:
+                return ['error' => 'Unreconigzed unit'];
         }
     }
 }

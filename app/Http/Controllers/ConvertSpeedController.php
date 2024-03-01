@@ -8,22 +8,31 @@ class ConvertSpeedController extends Controller
 {
     public function __invoke($value, $unit)
     {
-        $result = $this->convertSpeed($value, $unit);
+        // Agafem el resultat de la conversió
+        if (!is_numeric($value)) {
+            return response()->json(['code' => 400, 'message'=> 'Value or Unit not numeric.']);
+        }
 
-        return response()->json(['result' => $result]);
+        // Agafem el resultat de la conversió
+        $result = $this->convertLength($value, strtolower($unit));
+
+        // Mostrem el resultats
+        return response()->json(['code' => 200, 'message'=> 'Value calculated', "data" => ['value' => $value, 'unit' => $unit], 'result' => $result]); 
     }
 
-    private function convertSpeed($value, $unit)
+    /**
+     * Funció per a fer la conversió
+     * @return double el resultat
+     */
+    private function convertLength($value, $unit)
     {
-        $conversionFactors = [
-            'kph_to_mph' => 0.621371,
-            'mph_to_kph' => 1.60934,
-        ];
-
-        if (isset($conversionFactors[$unit])) {
-            return $value * $conversionFactors[$unit];
-        } else {
-            return ['error' => 'Invalid unit'];
+        switch ($unit) {
+            case 'kilometers':
+                return $value * 3.28084;
+            case 'miles':
+                return $value / 3.28084;
+            default:
+                return ['error' => 'Unreconigzed unit'];
         }
     }
 }
