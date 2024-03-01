@@ -2,6 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ConvertLengthController;
+use App\Http\Controllers\ConvertWeightController;
+use App\Http\Controllers\ConvertTemperatureController;
+use App\Http\Controllers\ConvertVolumeController;
+use App\Http\Controllers\ConvertSpeedController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,3 +22,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/convert/length/{value}/{unit}', [ConvertLengthController::class, 'convert']);
+Route::get('/convert/weight/{value}/{unit}', [ConvertWeightController::class, 'convert']);
+Route::get('/convert/temperature/{value}/{unit}', [ConvertTemperatureController::class, 'convert']);
+Route::get('/convert/volume/{value}/{unit}', [ConvertVolumeController::class, 'convert']);
+Route::get('/convert/speed/{value}/{unit}', [ConvertSpeedController::class, 'convert']);
